@@ -1,9 +1,10 @@
 import 'dart:html';
-
 import 'package:flutter/material.dart';
 import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:flutter_delivery_app/bloc/cartListBloc.dart';
 import 'package:flutter_delivery_app/model/foodItem.dart';
+
+import 'cart.dart';
 
 void main() => runApp(MyApp());
 
@@ -32,15 +33,157 @@ class Home extends StatelessWidget {
               children: <Widget>[
                 FirstHalf(),
                 SizedBox(height: 45),
-                // for(var foodItem in foodItemList.foodItems){
-                //   ItemContainer(foodItem : foodItem)
-                // }
+                for(var foodItem in foodItemList.foodItems)
+                  ItemContainer(foodItem : foodItem)
               ],
           )
         )
       )
     );
   }
+}
+
+class ItemContainer extends StatelessWidget {
+  final FoodItem foodItem;
+
+  ItemContainer({@required this.foodItem});
+
+  final CartListBloc bloc = BlocProvider.getBloc<CartListBloc>();
+
+  addToCart(FoodItem foodItem) {
+    bloc.addToList(foodItem);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: (){
+        addToCart(foodItem);
+
+        final snackBar = SnackBar(
+          content: Text("${foodItem.title} added to the cart"),
+          duration: Duration(milliseconds: 550),
+          );
+
+          Scaffold.of(context).showSnackBar(snackBar);
+      },
+      child: Items(
+        restaurant: foodItem.restaurant,
+        itemName: foodItem.title,
+        itemPrice: foodItem.price,
+        imgUrl : foodItem.imgUrl,
+        leftAligned: (foodItem.id % 2) == 0 ? true : false
+        ),
+    );
+  }
+}
+
+class Items extends StatelessWidget {
+  Items({
+    @required this.leftAligned,
+    @required this.imgUrl,
+    @required this.itemName,
+    @required this.itemPrice,
+    @required this.restaurant,
+  });
+
+  final bool leftAligned;
+  final String imgUrl;
+  final String itemName;
+  final double itemPrice;
+  final String restaurant;
+
+    @override
+    Widget build(BuildContext context) {
+      double containerPadding = 45;
+      double containerBorderRadius = 10;
+
+      return Column(
+        children: <Widget>[
+          Container(
+            padding: EdgeInsets.only(
+              left: leftAligned ? 0: containerPadding,
+              right: leftAligned ? containerPadding : 0,
+            ),
+            child: Column(
+              children: <Widget>[
+                Container(
+                  width: double.infinity,
+                  height: 275,
+                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.horizontal(
+                      left: leftAligned 
+                      ? Radius.circular(0)
+                      : Radius.circular(containerBorderRadius),
+                      right: leftAligned
+                      ? Radius.circular(containerBorderRadius)
+                      : Radius.circular(0),
+                    ),
+                    child: Image.network(
+                      imgUrl,
+                      fit: BoxFit.fill
+                    ),
+                    )
+                  ),
+                  SizedBox(height: 20),
+                  Container(
+                    padding: EdgeInsets.only(
+                      left: leftAligned ? 20 : 0,
+                      right: leftAligned ? 0 : 20,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                        Expanded(
+                          child: Text(
+                            itemName,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 18 
+                            )
+                          ),
+                          ),
+                          Text("\$$itemPrice",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 18
+                          ))
+                          ],
+                        ),
+                        SizedBox(height: 10),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: RichText(
+                            text: TextSpan(
+                              style: TextStyle(
+                                color: Colors.black45,
+                                fontSize: 15
+                              ),
+                              children: [
+                                TextSpan(text: "by "),
+                                TextSpan(
+                                  text: restaurant,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w700
+                                  )
+                                )
+                              ]
+                             )
+                          ),
+                        ),
+                        SizedBox(height: containerPadding)
+                      ],
+                    )
+                  )
+              ],
+            )
+          )
+        ]
+      );
+    }
 }
 
 class FirstHalf extends StatelessWidget {
@@ -162,6 +305,9 @@ Widget title() {
 }
 
 class CustomAppBar extends StatelessWidget {
+
+  final CartListBloc bloc = BlocProvider.getBloc<CartListBloc>();
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -170,19 +316,42 @@ class CustomAppBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Icon(Icons.menu),
-          GestureDetector(
-            onTap: () {},
-            child: Container(
-              margin: EdgeInsets.only(right: 30),
-              child: Text("0"),
-              padding: EdgeInsets.all(15),
-              decoration: BoxDecoration(
-                color: Colors.yellow[800],
-                borderRadius: BorderRadius.circular(50) 
-              )
-            ),
-          )
+          StreamBuilder(
+            stream: bloc.listStream,
+            builder: (context, snapshot){
+
+              List<FoodItem> foodItems = snapshot.data;
+
+              int length = foodItems != null ? foodItems.length : 0;
+
+              return buildGestureDetector(length, context, foodItems);
+
+            },
+          ),
         ],
+      ),
+    );
+  }
+
+  GestureDetector buildGestureDetector(int length, BuildContext context, List<FoodItem> foodItems) {
+    return GestureDetector(
+      onTap: () {
+        //allowing the user to access the cart only if there is anything in the cart
+        if(length > 0) {
+          Navigator.push(
+            context, MaterialPageRoute(builder: (context) => Cart()));
+        } else {
+          return;
+        }      
+      },
+      child: Container(
+        margin: EdgeInsets.only(right: 30),
+        child: Text(length.toString()),
+        padding: EdgeInsets.all(15),
+        decoration: BoxDecoration(
+          color: Colors.yellow[800],
+          borderRadius: BorderRadius.circular(50) 
+        )
       ),
     );
   }
