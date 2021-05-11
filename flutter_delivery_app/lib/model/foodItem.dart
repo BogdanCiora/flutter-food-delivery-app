@@ -6,14 +6,14 @@ FoodItemList foodItemList = FoodItemList(foodItems: [
     title: "Beef Classic Burger",
     restaurant: "Your Burger",
     price: 25,
-    imgUrl: "./images/ClassicBurger.jpg"
+    imgUrl: "https://hips.hearstapps.com/pop.h-cdn.co/assets/cm/15/05/480x240/54ca71fb94ad3_-_5summer_skills_burger_470_0808-de.jpg"
   ),
   FoodItem(
-    id: 1,
+    id: 2,
     title: "Crispy Rice",
     restaurant: "Rice-N-Go",
     price: 25,
-    imgUrl: "./images/CrispyRice.jpg"
+    imgUrl: "https://www.bigbelly-brasov.ro/filehandler/Productfile/1000x0/portie-pulpe-de-pui-75.jpg?v=637043161817947479"
   ),
 ]);
 
