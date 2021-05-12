@@ -65,6 +65,7 @@ class ItemContainer extends StatelessWidget {
           duration: Duration(milliseconds: 550),
           );
 
+          // ignore: deprecated_member_use
           Scaffold.of(context).showSnackBar(snackBar);
       },
       child: Items(
@@ -146,7 +147,7 @@ class Items extends StatelessWidget {
                             )
                           ),
                           ),
-                          Text("\$$itemPrice",
+                          Text("\ $itemPrice RON",
                           style: TextStyle(
                             fontWeight: FontWeight.w700,
                             fontSize: 18

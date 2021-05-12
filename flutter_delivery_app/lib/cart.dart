@@ -122,7 +122,7 @@ class BottomBar extends StatelessWidget {
             ),
           ),
           Text(
-            "\$${returnTotalAmount(foodItems)}",
+            "\ ${returnTotalAmount(foodItems)} RON",
             style: TextStyle(
               fontWeight: FontWeight.w700,
               fontSize: 28
@@ -337,7 +337,7 @@ class ItemContent extends StatelessWidget {
                   TextSpan(text: foodItem.title)
                 ]),
           ),
-          Text("\$${foodItem.quantity * foodItem.price}",
+          Text("\ ${foodItem.quantity * foodItem.price} RON",
               style: TextStyle(
                   color: Colors.grey[300], fontWeight: FontWeight.w400)),
         ],
