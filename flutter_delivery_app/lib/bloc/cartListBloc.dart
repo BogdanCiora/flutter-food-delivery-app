@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:async';
 import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:flutter_delivery_app/bloc/provider.dart';
 import 'package:flutter_delivery_app/model/foodItem.dart';

@@ -122,7 +122,7 @@ class BottomBar extends StatelessWidget {
             ),
           ),
           Text(
-            "\$${returnTotalAmount(foodItems)}",
+            "\ ${returnTotalAmount(foodItems)} RON",
             style: TextStyle(
               fontWeight: FontWeight.w700,
               fontSize: 28
@@ -294,11 +294,57 @@ class CartListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return Draggable(
+      data: foodItem,
+      maxSimultaneousDrags: 1,
+      child: DraggableChild(foodItem: foodItem),
+      feedback: DraggableChildFeedback(foodItem: foodItem),
+      //if you have multiple items, the item that is dragged will be duplicated, 
+      //else it will be dragged/removed completely from the container
+      childWhenDragging: foodItem.quantity > 1 
+        ? DraggableChild(
+          foodItem: foodItem,
+        )
+        : Container()
+    );
+  }
+}
+
+class DraggableChild extends StatelessWidget {
+  const DraggableChild({
+    Key key,
+    @required this.foodItem,
+  }) : super(key: key);
+
+  final FoodItem foodItem;
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(bottom: 25),
-      child: ItemContent(
-        foodItem: foodItem,
-      ),
+      child: ItemContent(foodItem: foodItem),
+    );
+  }
+}
+
+class DraggableChildFeedback extends StatelessWidget {
+  const DraggableChildFeedback({
+    Key key,
+    @required this.foodItem,
+  }) : super(key: key);
+
+  final FoodItem foodItem;
+
+  @override
+  Widget build(BuildContext context) {
+    return Opacity(
+      opacity: 0.7,
+      child: Material(
+        child: Container(
+          margin: EdgeInsets.only(bottom: 25),
+          child: ItemContent(foodItem: foodItem),
+        ),
+      ), 
     );
   }
 }
@@ -337,7 +383,7 @@ class ItemContent extends StatelessWidget {
                   TextSpan(text: foodItem.title)
                 ]),
           ),
-          Text("\$${foodItem.quantity * foodItem.price}",
+          Text("\ ${foodItem.quantity * foodItem.price} RON",
               style: TextStyle(
                   color: Colors.grey[300], fontWeight: FontWeight.w400)),
         ],
@@ -367,17 +413,40 @@ class CustomAppBar extends StatelessWidget {
             },
           ),
         ),
-        GestureDetector(
-          child: Padding(
-            padding: EdgeInsets.all(5.0),
-            child: Icon(
-              CupertinoIcons.delete,
-              size: 35,
-            ),
-          ),
-          onTap: () {},
-        ),
+        DragTargetWidget(),
       ],
+    );
+  }
+}
+
+class DragTargetWidget extends StatefulWidget {
+  @override
+  _DragTargetWidgetState createState() => _DragTargetWidgetState();
+}
+
+class _DragTargetWidgetState extends State<DragTargetWidget> {
+
+  final CartListBloc listBloc = BlocProvider.getBloc<CartListBloc>();
+
+  @override
+  Widget build(BuildContext context) {
+    return DragTarget<FoodItem>(
+
+      onWillAccept: (FoodItem foodItem) {
+        return true;
+      },
+      onAccept: (FoodItem foodItem) {
+        listBloc.removeFromList(foodItem);
+      },
+      builder: (context, incoming, rejected) {
+        return Padding(
+          padding: EdgeInsets.all(5.0),
+          child: Icon(
+            CupertinoIcons.delete,
+            size: 35,
+          ),
+        );
+      }
     );
   }
 }
