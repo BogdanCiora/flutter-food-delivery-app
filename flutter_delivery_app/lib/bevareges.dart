@@ -2,18 +2,18 @@ import 'dart:html';
 import 'package:flutter/material.dart';
 import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:flutter_delivery_app/bloc/cartListBloc.dart';
+import 'package:flutter_delivery_app/main.dart';
 import 'package:flutter_delivery_app/model/foodItem.dart';
-import 'package:flutter_delivery_app/model/foodItemBurgers.dart';
+import 'package:flutter_delivery_app/model/foodItemBevareges.dart';
 import 'package:flutter_delivery_app/pizza.dart';
 
-import 'bevareges.dart';
 import 'cart.dart';
 import 'gourmet.dart';
 import 'menus.dart';
+import 'model/foodItem.dart';
+import 'model/foodItemBurgers.dart';
 
-void main() => runApp(MyApp());
-
-class MyApp extends StatelessWidget {
+class BevaregesCategory extends StatelessWidget {
   @override
   Widget build (BuildContext context) {
     return BlocProvider(
@@ -38,7 +38,7 @@ class Home extends StatelessWidget {
               children: <Widget>[
                 FirstHalf(),
                 SizedBox(height: 45),
-                for(var foodItem in foodItemListBurgers.foodItems)
+                for(var foodItem in foodItemListBevareges.foodItems)
                   ItemContainer(foodItem : foodItem)
               ],
           )
@@ -115,7 +115,7 @@ class Items extends StatelessWidget {
               children: <Widget>[
                 Container(
                   width: double.infinity,
-                  height: 375,
+                  height: 300,
                   decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
                   child: ClipRRect(
                     borderRadius: BorderRadius.horizontal(
@@ -220,7 +220,7 @@ Widget categories(BuildContext context) {
       scrollDirection: Axis.horizontal,
       children: <Widget>[
 
-       GestureDetector(
+        GestureDetector(
           onTap: () {
               Navigator.push(context, MaterialPageRoute(builder: (context) => MyApp())); 
           },
@@ -228,7 +228,7 @@ Widget categories(BuildContext context) {
             categoryIcon: Icons.fastfood,
             categoryName: "Burgers",
             availability: 12,
-            selected: true, 
+            selected: false, 
           ),
         ),
 
@@ -276,7 +276,7 @@ Widget categories(BuildContext context) {
             categoryIcon: Icons.emoji_food_beverage,
             categoryName: "Bevareges",
             availability: 12,
-            selected: false, 
+            selected: true, 
           ),
         ),
       ],

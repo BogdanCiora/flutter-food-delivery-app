@@ -3,8 +3,12 @@ import 'dart:html';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_delivery_app/bloc/cartListBloc.dart';
+import 'package:flutter_delivery_app/finalizedOrder.dart';
+import 'main.dart';
 import 'model/foodItem.dart';
 import 'package:bloc_pattern/bloc_pattern.dart';
+
+int noOfPersons = 1;
 
 class Cart extends StatelessWidget {
   final CartListBloc bloc = BlocProvider.getBloc<CartListBloc>();
@@ -52,13 +56,13 @@ class BottomBar extends StatelessWidget {
             color: Colors.grey[700],
           ),
           persons(),
-          nextButtonBar(),
+          nextButtonBar(context),
         ],
       ),
     );
   }
 
-  Container nextButtonBar() {
+  Container nextButtonBar(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(right: 25),
       padding: EdgeInsets.all(25),
@@ -69,18 +73,23 @@ class BottomBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Text(
-            "15-25 min",
+            "${noOfPersons * 5 + 20} min",
             style: TextStyle(
               fontWeight: FontWeight.w800,
               fontSize: 14,
             ),
           ),
-          Text(
-            "Next",
-            style: TextStyle(
-              fontWeight: FontWeight.w900,
-              fontSize: 16
-            ),
+          GestureDetector(
+          onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => FinalizedOrder())); 
+          },
+            child: Text(
+              "Next",
+              style: TextStyle(
+                fontWeight: FontWeight.w900,
+                fontSize: 16,
+              ),
+          ),
           ),
         ],
       ),
@@ -150,7 +159,6 @@ class CustomPersonWidget extends StatefulWidget {
 }
 
 class _CustomPersonWidgetState extends State<CustomPersonWidget> {
-  int noOfPersons = 1;
   double _buttonWidth = 30;
 
   @override
