@@ -2,18 +2,17 @@ import 'dart:html';
 import 'package:flutter/material.dart';
 import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:flutter_delivery_app/bloc/cartListBloc.dart';
-import 'package:flutter_delivery_app/model/foodItem.dart';
+import 'package:flutter_delivery_app/main.dart';
 import 'package:flutter_delivery_app/model/foodItemBurgers.dart';
+import 'package:flutter_delivery_app/model/foodItemGourmet.dart';
 import 'package:flutter_delivery_app/pizza.dart';
 
 import 'bevareges.dart';
 import 'cart.dart';
-import 'gourmet.dart';
 import 'menus.dart';
+import 'model/foodItem.dart';
 
-void main() => runApp(MyApp());
-
-class MyApp extends StatelessWidget {
+class GourmetCategory extends StatelessWidget {
   @override
   Widget build (BuildContext context) {
     return BlocProvider(
@@ -38,7 +37,7 @@ class Home extends StatelessWidget {
               children: <Widget>[
                 FirstHalf(),
                 SizedBox(height: 45),
-                for(var foodItem in foodItemListBurgers.foodItems)
+                for(var foodItem in foodItemListGourmet.foodItems)
                   ItemContainer(foodItem : foodItem)
               ],
           )
@@ -220,7 +219,7 @@ Widget categories(BuildContext context) {
       scrollDirection: Axis.horizontal,
       children: <Widget>[
 
-       GestureDetector(
+        GestureDetector(
           onTap: () {
               Navigator.push(context, MaterialPageRoute(builder: (context) => MyApp())); 
           },
@@ -228,7 +227,7 @@ Widget categories(BuildContext context) {
             categoryIcon: Icons.fastfood,
             categoryName: "Burgers",
             availability: 12,
-            selected: true, 
+            selected: false, 
           ),
         ),
 
@@ -264,7 +263,7 @@ Widget categories(BuildContext context) {
             categoryIcon: Icons.room_service,
             categoryName: "Gourmet",
             availability: 12,
-            selected: false, 
+            selected: true, 
           ),
         ),
 
